@@ -1,0 +1,197 @@
+import { useState, useEffect } from "react";
+const statusColors = {
+agendada:{bg:"#FFF3CD",text:"#856404",dot:"#FFC107"},
+realizada:{bg:"#D1FAE5",text:"#065F46",dot:"#10B981"},
+cancelada:{bg:"#FEE2E2",text:"#991B1B",dot:"#EF4444"},
+pendente:{bg:"#E0E7FF",text:"#3730A3",dot:"#6366F1"},
+};
+const priorityColors={alta:"#EF4444",media:"#F59E0B",baixa:"#10B981"};
+function formatDate(d){if(!d)return"—";const[y,m,day]=d.split("-");return`${day}/${m}/${y}`;}
+function today(){return new Date().toISOString().split("T")[0];}
+function daysFromNow(ds){if(!ds)return null;return Math.ceil((new Date(ds)-new Date(today()))/export default function App(){
+const[view,setView]=useState("dashboard");
+const[clients,setClients]=useState(()=>{try{const s=JSON.parse(localStorage.getItem("crm_clients_const[visits,setVisits]=useState(()=>{try{return JSON.parse(localStorage.getItem("crm_visits_const[selectedClient,setSelectedClient]=useState(null);
+const[showVisitForm,setShowVisitForm]=useState(false);
+const[showClientForm,setShowClientForm]=useState(false);
+const[editVisit,setEditVisit]=useState(null);
+const[editClient,setEditClient]=useState(null);
+const[search,setSearch]=useState("");
+const[filterStatus,setFilterStatus]=useState("todos");
+const[filterCity,setFilterCity]=useState("todas");
+const[toast,setToast]=useState(null);
+useEffect(()=>{localStorage.setItem("crm_clients_v3",JSON.stringify(clients));},[clients]);
+useEffect(()=>{localStorage.setItem("crm_visits_v3",JSON.stringify(visits));},[visits]);
+function showToast(msg,type="success"){setToast({msg,type});setTimeout(()=>setToast(null),3000);}
+function saveVisit(data){if(editVisit){setVisits(v=>v.map(x=>x.id===editVisit.id?{...x,...data}:function deleteVisit(id){setVisits(v=>v.filter(x=>x.id!==id));showToast("Visita removida.","function saveClient(data){if(editClient){setClients(c=>c.map(x=>x.id===editClient.id?{...x,...function deleteClient(id){setClients(c=>c.filter(x=>x.id!==id));setVisits(v=>v.filter(x=>x.const todayVisits=visits.filter(v=>v.date===today());
+const upcomingVisits=visits.filter(v=>v.date>today()&&v.status==="agendada").sort((a,b)=>a.const overdueVisits=visits.filter(v=>v.date<today()&&v.status==="agendada");
+const cities=[...new Set(clients.map(c=>c.city).filter(Boolean))].sort();
+const filteredVisits=visits
+.filter(v=>filterStatus==="todos"||v.status===filterStatus)
+.filter(v=>{if(!search)return true;const cl=clients.find(c=>c.id===v.clientId);return cl?..sort((a,b)=>b.date?.localeCompare(a.date));
+const filteredClients=clients
+.filter(c=>filterCity==="todas"||c.city===filterCity)
+.filter(c=>c.name.toLowerCase().includes(search.toLowerCase())||c.city?.toLowerCase().includes(const inp={width:"100%",background:"#0F172A",border:"1px solid #334155",borderRadius:8,padding:"return(
+<div style={{fontFamily:"'DM Sans',sans-serif",background:"#0F172A",minHeight:"100vh",color:"#<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=<style>{`
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(@keyframes sIn{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:.card{animation:fadeIn 0.3s ease}.nb:hover{background:rgba(99,102,241,0.15)!important}
+.cr:hover{background:#1a2744!important;cursor:pointer}.vc:hover{transform:translateY(-.ab:hover{opacity:0.7} input:focus,select:focus,textarea:focus{border-color:#6366F1!important}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#334155;border-radius:`}</style>
+{toast&&<div style={{position:"fixed",top:20,right:20,zIndex:9999,background:toast.type==="<div style={{display:"flex",minHeight:"100vh"}}>
+{/* SIDEBAR */}
+<div style={{width:220,background:"#1E293B",padding:"24px 14px",display:"flex",flexDirection:"<div style={{marginBottom:28,paddingLeft:8}}>
+<div style={{fontSize:18,fontFamily:"'Space Grotesk'",fontWeight:700,color:"#818CF8"}}><div style={{fontSize:11,color:"#475569",marginTop:2}}>{clients.length} clientes </div>
+{[{id:"dashboard",icon:"⬡",label:"Dashboard"},{id:"visitas",icon:" ",label:"Visitas",<button key={n.id} className="nb" onClick={()=>setView(n.id)} style={{background:<span style={{fontSize:16}}>{n.icon}</span>{n.label}
+{n.badge>0&&<span style={{marginLeft:"auto",background:"#EF4444",color:"white",</button>
+))}
+<div style={{marginTop:"auto",paddingTop:16,borderTop:"1px solid #334155",fontSize:</div>
+{/* MAIN */}
+<div style={{flex:1,padding:28,overflowY:"auto",maxHeight:"100vh"}}>
+{/* DASHBOARD */}
+{view==="dashboard"&&(
+<div className="card">
+<h1 style={{fontSize:26,fontFamily:"'Space Grotesk'",fontWeight:700,marginBottom:<p style={{color:"#64748B",marginBottom:24,fontSize:14}}>Sua carteira comercial <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14,marginBottom:{[{label:"Clientes",value:clients.length,icon:" ",color:"#6366F1"},{label:"Hoje",<div key={s.label} style={{background:"#1E293B",borderRadius:14,padding:"18px <div style={{fontSize:22}}>{s.icon}</div>
+<div style={{fontSize:28,fontWeight:700,marginTop:6,fontFamily:"'Space Grotesk'"}}>{<div style={{color:"#64748B",fontSize:12}}>{s.label}</div>
+</div>
+))}
+</div>
+<div style={{background:"#1E293B",borderRadius:14,padding:20,marginBottom:20}}>
+<div style={{fontWeight:700,marginBottom:12,fontSize:14}}> Clientes por Cidade</<div style={{display:"flex",flexWrap:"wrap",gap:8}}>
+{cities.map(city=>{
+const count=clients.filter(c=>c.city===city).length;
+return(<div key={city} onClick={()=>{setFilterCity(city);setSearch("");setView("<span style={{color:"#94A3B8"}}>{city}</span>
+<span style={{background:"#6366F1",color:"white",borderRadius:99,fontSize:</div>);
+})}
+</div>
+</div>
+<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:18}}>
+<div style={{background:"#1E293B",borderRadius:14,padding:20}}>
+<div style={{fontWeight:700,marginBottom:12,fontSize:14}}> Visitas Hoje</{todayVisits.length===0?<p style={{color:"#475569",fontSize:13}}>Nenhuma visita </div>
+<div style={{background:"#1E293B",borderRadius:14,padding:20}}>
+<div style={{fontWeight:700,marginBottom:12,fontSize:14}}> Próximas Visitas</{upcomingVisits.slice(0,5).map(v=>{const c=clients.find(x=>x.id===v.clientId);{upcomingVisits.length===0&&<p style={{color:"#475569",fontSize:13}}>Nenhuma </div>
+</div>
+</div>
+)}
+{/* CLIENTES */}
+{view==="clientes"&&(
+<div className="card">
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",<div><h2 style={{fontSize:22,fontFamily:"'Space Grotesk'",fontWeight:700}}>Clientes</<button onClick={()=>{setEditClient(null);setShowClientForm(true);}} style={{</div>
+<div style={{display:"flex",gap:10,marginBottom:16,flexWrap:"wrap"}}>
+<input value={search} onChange={e=>setSearch(e.target.value)} placeholder=" <select value={filterCity} onChange={e=>setFilterCity(e.target.value)} style={{...
+<option value="todas">Todas as cidades</option>
+{cities.map(c=><option key={c} value={c}>{c}</option>)}
+</select>
+</div>
+<div style={{background:"#1E293B",borderRadius:14,overflow:"hidden"}}>
+<div style={{display:"grid",gridTemplateColumns:"2fr 1.2fr 1.2fr 0.6fr 80px",<span>Empresa</span><span>Cidade</span><span>Telefone</span><span>Visit.</span><</div>
+{filteredClients.map((c,i)=>{
+const cv=visits.filter(v=>v.clientId===c.id);
+const next=cv.filter(v=>v.date>=today()&&v.status==="agendada").sort((a,b)=>return(<div key={c.id} className="cr" style={{display:"grid",gridTemplateColumns:"<div><div style={{fontWeight:600,fontSize:13}}>{c.name}</div>{next&&<div <div style={{color:"#94A3B8",fontSize:12}}>{c.city}</div>
+<div style={{color:"#94A3B8",fontSize:12}}>{c.phone}</div>
+<span style={{background:"#0F172A",color:"#818CF8",borderRadius:99,padding:"<div style={{display:"flex",gap:5}} onClick={e=>e.stopPropagation()}>
+<button className="ab" onClick={()=>{setEditClient(c);setShowClientForm(<button className="ab" onClick={()=>deleteClient(c.id)} style={{background:"#</div>
+</div>);
+})}
+</div>
+</div>
+)}
+{/* CLIENTE DETALHE */}
+{view==="cliente-detalhe"&&selectedClient&&(()=>{
+const c=selectedClient;
+const cv=visits.filter(v=>v.clientId===c.id).sort((a,b)=>b.date?.localeCompare(a.return(<div className="card">
+<button onClick={()=>setView("clientes")} style={{background:"none",border:"none",<div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",<div>
+<h2 style={{fontSize:20,fontFamily:"'Space Grotesk'",fontWeight:700}}>{c.name}</<p style={{color:"#94A3B8",fontSize:13,marginTop:4}}> {c.address}</p>
+{c.phone&&<p style={{color:"#64748B",fontSize:12}}> {c.phone}</p>}
+<p style={{color:"#475569",fontSize:11,marginTop:4}}>{c.notes}</p>
+</div>
+<button onClick={()=>{setEditVisit(null);setShowVisitForm(true);}} style={{background:"#</div>
+<div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:{[{label:"Total",value:cv.length},{label:"Realizadas",value:cv.filter(v=>v.status==="<div key={s.label} style={{background:"#1E293B",borderRadius:12,padding:14,<div style={{fontSize:24,fontWeight:700,fontFamily:"'Space Grotesk'"}}>{s.<div style={{color:"#64748B",fontSize:12}}>{s.label}</div>
+</div>
+))}
+</div>
+<h3 style={{fontWeight:700,marginBottom:12,fontSize:15}}>Histórico de Visitas</{cv.length===0&&<p style={{color:"#475569",fontSize:13}}>Nenhuma visita registrada.</{cv.map(v=>{const sc=statusColors[v.status]||statusColors.agendada;return(
+<div key={v.id} style={{background:"#1E293B",borderRadius:12,padding:"12px 16px",<div style={{width:9,height:9,borderRadius:"50%",background:sc.dot,flexShrink:<div style={{flex:1}}><div style={{fontWeight:600,fontSize:14}}>{formatDate(<span style={{fontSize:11,background:sc.bg,color:sc.text,padding:"3px 10px",<button className="ab" onClick={()=>{setEditVisit(v);setShowVisitForm(true);}} <button className="ab" onClick={()=>deleteVisit(v.id)} style={{background:"#</div>
+);})}
+</div>);
+})()}
+{/* VISITAS */}
+{view==="visitas"&&(
+<div className="card">
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",<div><h2 style={{fontSize:22,fontFamily:"'Space Grotesk'",fontWeight:700}}>Visitas</<button onClick={()=>{setEditVisit(null);setShowVisitForm(true);}} style={{background:"#</div>
+<div style={{display:"flex",gap:8,marginBottom:16,flexWrap:"wrap"}}>
+<input value={search} onChange={e=>setSearch(e.target.value)} placeholder=" {["todos","agendada","realizada","cancelada","pendente"].map(s=>(
+<button key={s} onClick={()=>setFilterStatus(s)} style={{background:filterStatus===))}
+</div>
+<div style={{display:"flex",flexDirection:"column",gap:8}}>
+{filteredVisits.length===0&&<div style={{textAlign:"center",color:"#475569",padding:{filteredVisits.map(v=>{
+const client=clients.find(c=>c.id===v.clientId);
+const sc=statusColors[v.status]||statusColors.agendada;
+const days=daysFromNow(v.date);
+return(<div key={v.id} className="vc" style={{background:"#1E293B",borderRadius:<div style={{width:9,height:9,borderRadius:"50%",background:sc.dot,flexShrink:<div style={{flex:1}}>
+<div style={{fontWeight:600,fontSize:14}}>{client?.name||"Cliente removido"}</<div style={{color:"#94A3B8",fontSize:12,marginTop:2}}>{formatDate(v.date)}{{v.notes&&<div style={{color:"#64748B",fontSize:12,marginTop:3,fontStyle:"</div>
+<div style={{display:"flex",alignItems:"center",gap:8}}>
+{days!==null&&days>=0&&v.status==="agendada"&&<span style={{fontSize:11,<span style={{fontSize:11,background:sc.bg,color:sc.text,padding:"3px 10px",<button className="ab" onClick={()=>{setEditVisit(v);setShowVisitForm(true);}} <button className="ab" onClick={()=>deleteVisit(v.id)} style={{background:"#
+</div>
+</div>);
+})}
+</div>
+</div>
+)}
+{/* AGENDA */}
+{view==="agenda"&&(()=>{
+const now=new Date();const year=now.getFullYear();const month=now.getMonth();
+const daysInMonth=new Date(year,month+1,0).getDate();
+const monthStr=`${year}-${String(month+1).padStart(2,"0")}`;
+const monthVisits=visits.filter(v=>v.date?.startsWith(monthStr));
+return(<div className="card">
+<h2 style={{fontSize:22,fontFamily:"'Space Grotesk'",fontWeight:700,marginBottom:<p style={{color:"#64748B",fontSize:13,marginBottom:20}}>{now.toLocaleDateString("<div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:4,marginBottom:{["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"].map(d=><div key={d} style={{textAlign:"</div>
+<div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:4}}>
+{Array.from({length:new Date(year,month,1).getDay()}).map((_,i)=><div key={`e${{Array.from({length:daysInMonth},(_,i)=>{
+const day=i+1;
+const dateStr=`${monthStr}-${String(day).padStart(2,"0")}`;
+const dv=monthVisits.filter(v=>v.date===dateStr);
+const isToday=dateStr===today();
+return(<div key={day} style={{background:isToday?"rgba(99,102,241,0.25)":"#<div style={{fontSize:12,fontWeight:isToday?700:400,color:isToday?"#818CF8":"#{dv.slice(0,2).map(v=>{const cl=clients.find(c=>c.id===v.clientId);const {dv.length>2&&<div style={{fontSize:9,color:"#64748B"}}>+{dv.length-2}</div>}
+</div>);
+})}
+</div>
+</div>);
+})()}
+{/* ALERTAS */}
+{view==="alertas"&&(
+<div className="card">
+<h2 style={{fontSize:22,fontFamily:"'Space Grotesk'",fontWeight:700,marginBottom:{overdueVisits.length>0&&(<div style={{marginBottom:20}}>
+<div style={{color:"#EF4444",fontWeight:700,marginBottom:10,fontSize:14}}> {overdueVisits.map(v=>{const c=clients.find(x=>x.id===v.clientId);return(<div </div>)}
+{todayVisits.length>0&&(<div style={{marginBottom:20}}>
+<div style={{color:"#10B981",fontWeight:700,marginBottom:10,fontSize:14}}> {todayVisits.map(v=>{const c=clients.find(x=>x.id===v.clientId);return(<div key={
+</div>)}
+{upcomingVisits.filter(v=>daysFromNow(v.date)<=5).length>0&&(<div>
+<div style={{color:"#F59E0B",fontWeight:700,marginBottom:10,fontSize:14}}> {upcomingVisits.filter(v=>daysFromNow(v.date)<=5).map(v=>{const c=clients.find(</div>)}
+{overdueVisits.length===0&&todayVisits.length===0&&upcomingVisits.filter(v=>daysFromNow(</div>
+)}
+</div>
+</div>
+{showVisitForm&&<Modal title={editVisit?"Editar Visita":"Nova Visita"} onClose={()=>{setShowVisitForm({showClientForm&&<Modal title={editClient?"Editar Cliente":"Novo Cliente"} onClose={()=>{</div>
+);
+}
+function Modal({title,children,onClose}){
+return(<div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.75)",zIndex:1000,display:"}
+function VisitForm({clients,initial,onSave,onCancel}){
+const[form,setForm]=useState({clientId:"",date:today(),time:"",status:"agendada",priority:"const set=(k,v)=>setForm(f=>({...f,[k]:v}));
+const inp={width:"100%",background:"#0F172A",border:"1px solid #334155",borderRadius:8,padding:"return(<div style={{display:"flex",flexDirection:"column",gap:12}}>
+<div><label style={{fontSize:11,color:"#64748B",display:"block",marginBottom:4}}>CLIENTE <select value={form.clientId} onChange={e=>set("clientId",Number(e.target.value))} style={<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+<div><label style={{fontSize:11,color:"#64748B",display:"block",marginBottom:4}}>DATA *</<div><label style={{fontSize:11,color:"#64748B",display:"block",marginBottom:4}}>HORÁRIO</</div>
+<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+<div><label style={{fontSize:11,color:"#64748B",display:"block",marginBottom:4}}>STATUS</<div><label style={{fontSize:11,color:"#64748B",display:"block",marginBottom:4}}>PRIORIDADE</</div>
+<div><label style={{fontSize:11,color:"#64748B",display:"block",marginBottom:4}}>NOTAS</label><<div style={{display:"flex",gap:10,justifyContent:"flex-end",marginTop:4}}>
+<button onClick={onCancel} style={{background:"#334155",color:"#94A3B8",border:"none",borderRadius:<button onClick={()=>{if(!form.clientId||!form.date)return alert("Preencha cliente e data!");</div>
+</div>);
+}
+function ClientForm({initial,onSave,onCancel}){
+const[form,setForm]=useState({name:"",contact:"",phone:"",address:"",city:"",notes:"",...initial});
+const set=(k,v)=>setForm(f=>({...f,[k]:v}));
+const inp={width:"100%",background:"#0F172A",border:"1px solid #334155",borderRadius:8,padding:"return(<div style={{display:"flex",flexDirection:"column",gap:12}}>
+<div><label style={{fontSize:11,color:"#64748B",display:"block",marginBottom:4}}>EMPRESA <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+<div><label style={{fontSize:11,color:"#64748B",display:"block",marginBottom:4}}>CIDADE</<div><label style={{fontSize:11,color:"#64748B",display:"block",marginBottom:4}}>TELEFONE</</div>
+<div><label style={{fontSize:11,color:"#64748B",display:"block",marginBottom:4}}>ENDEREÇO</<div><label style={{fontSize:11,color:"#64748B",display:"block",marginBottom:4}}>OBSERVAÇÕES</<div style={{display:"flex",gap:10,justifyContent:"flex-end",marginTop:4}}>
+<button onClick={onCancel} style={{background:"#334155",color:"#94A3B8",border:"none",borderRadius:<button onClick={()=>{if(!form.name)return alert("Preencha o nome!");onSave(form);}} style={{</div>
+</div>);
+}
