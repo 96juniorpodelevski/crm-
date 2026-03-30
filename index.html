@@ -3,24 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRM de Visitas - M2 Representações</title>
+    <title>CRM Visitas - M2</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    
     <style>
-        body { font-family: 'DM Sans', sans-serif; background-color: #0F172A; color: white; margin: 0; }
+        body { font-family: 'DM Sans', sans-serif; background-color: #0F172A; color: white; }
         .sidebar-btn:hover { background: rgba(99, 102, 241, 0.15); }
-        .card-anim { animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        input, select, textarea { background: #1E293B !important; border: 1px solid #334155 !important; color: white !important; }
+        .active-btn { background: #4F46E5 !important; }
     </style>
 </head>
 <body>
     <div id="root"></div>
-
     <script type="text/babel">
         const { useState, useEffect } = React;
 
@@ -28,108 +24,65 @@
             const [view, setView] = useState("dashboard");
             const [clients, setClients] = useState(() => JSON.parse(localStorage.getItem("crm_clients_v3") || "[]"));
             const [visits, setVisits] = useState(() => JSON.parse(localStorage.getItem("crm_visits_v3") || "[]"));
-            const [search, setSearch] = useState("");
 
             useEffect(() => { localStorage.setItem("crm_clients_v3", JSON.stringify(clients)); }, [clients]);
             useEffect(() => { localStorage.setItem("crm_visits_v3", JSON.stringify(visits)); }, [visits]);
 
-            const today = new Date().toISOString().split("T")[0];
-            const todayVisits = visits.filter(v => v.date === today);
+            const renderContent = () => {
+                switch(view) {
+                    case "dashboard": return (
+                        <div className="animate-in fade-in duration-500">
+                            <h2 className="text-3xl font-bold font-['Space_Grotesk'] mb-2">Boas-vindas!</h2>
+                            <p className="text-slate-400 mb-8">Gestão comercial M2 Representações</p>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div className="bg-[#1E293B] p-6 rounded-2xl border border-slate-700">
+                                    <p className="text-slate-400 text-sm">Clientes</p>
+                                    <p className="text-4xl font-bold mt-2">{clients.length}</p>
+                                </div>
+                                <div className="bg-[#1E293B] p-6 rounded-2xl border border-slate-700">
+                                    <p className="text-slate-400 text-sm">Visitas Hoje</p>
+                                    <p className="text-4xl font-bold mt-2 text-indigo-400">{visits.filter(v => v.date === new Date().toISOString().split('T')[0]).length}</p>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                    case "clientes": return (
+                        <div>
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-2xl font-bold font-['Space_Grotesk']">Carteira de Clientes</h2>
+                                <button onClick={() => {
+                                    const name = prompt("Nome da Empresa:");
+                                    if(name) setClients([...clients, {id: Date.now(), name, city: prompt("Cidade:"), phone: prompt("Telefone:")}]);
+                                }} className="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg font-bold transition">+ Novo Cliente</button>
+                            </div>
+                            <div className="bg-[#1E293B] rounded-xl border border-slate-700 overflow-hidden text-sm">
+                                {clients.map(c => (
+                                    <div key={c.id} className="p-4 border-b border-slate-700 flex justify-between hover:bg-slate-800">
+                                        <div><p className="font-bold">{c.name}</p><p className="text-slate-400">{c.city}</p></div>
+                                        <button onClick={() => setClients(clients.filter(x => x.id !== c.id))} className="text-red-400">Excluir</button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                    default: return <div className="text-slate-500">Em desenvolvimento...</div>;
+                }
+            };
 
             return (
                 <div className="flex min-h-screen">
-                    {/* SIDEBAR */}
-                    <div className="w-64 bg-[#1E293B] p-6 flex flex-col border-r border-slate-700">
-                        <div className="mb-8">
-                            <h1 className="text-indigo-400 font-bold text-xl font-['Space_Grotesk']">M2 CRM</h1>
-                            <p className="text-slate-500 text-xs">{clients.length} clientes ativos</p>
+                    <aside className="w-64 bg-[#1E293B] border-r border-slate-700 p-6 flex flex-col gap-8">
+                        <div>
+                            <h1 className="text-indigo-400 font-bold text-2xl font-['Space_Grotesk']">M2 CRM</h1>
                         </div>
-                        
                         <nav className="flex flex-col gap-2">
-                            <button onClick={() => setView("dashboard")} className={`p-3 rounded-lg text-left sidebar-btn ${view === 'dashboard' ? 'bg-indigo-600' : ''}`}>⬡ Dashboard</button>
-                            <button onClick={() => setView("clientes")} className={`p-3 rounded-lg text-left sidebar-btn ${view === 'clientes' ? 'bg-indigo-600' : ''}`}>👥 Clientes</button>
-                            <button onClick={() => setView("visitas")} className={`p-3 rounded-lg text-left sidebar-btn ${view === 'visitas' ? 'bg-indigo-600' : ''}`}>📅 Visitas</button>
+                            <button onClick={() => setView("dashboard")} className={`text-left p-3 rounded-xl transition sidebar-btn ${view === 'dashboard' ? 'active-btn' : ''}`}>⬡ Dashboard</button>
+                            <button onClick={() => setView("clientes")} className={`text-left p-3 rounded-xl transition sidebar-btn ${view === 'clientes' ? 'active-btn' : ''}`}>👥 Clientes</button>
+                            <button onClick={() => setView("visitas")} className={`text-left p-3 rounded-xl transition sidebar-btn ${view === 'visitas' ? 'active-btn' : ''}`}>📅 Visitas</button>
                         </nav>
-                    </div>
-
-                    {/* CONTEÚDO PRINCIPAL */}
-                    <main className="flex-1 p-8 overflow-y-auto card-anim">
-                        {view === "dashboard" && (
-                            <div>
-                                <h2 className="text-2xl font-bold mb-2 font-['Space_Grotesk']">Dashboard Comercial</h2>
-                                <p className="text-slate-400 mb-8">Resumo das suas atividades hoje, {new Date().toLocaleDateString('pt-BR')}</p>
-                                
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                                    <div className="bg-[#1E293B] p-6 rounded-2xl border border-slate-700">
-                                        <p className="text-slate-400 text-sm">Total de Clientes</p>
-                                        <p className="text-3xl font-bold mt-2">{clients.length}</p>
-                                    </div>
-                                    <div className="bg-[#1E293B] p-6 rounded-2xl border border-slate-700">
-                                        <p className="text-slate-400 text-sm">Visitas Hoje</p>
-                                        <p className="text-3xl font-bold mt-2 text-indigo-400">{todayVisits.length}</p>
-                                    </div>
-                                    <div className="bg-[#1E293B] p-6 rounded-2xl border border-slate-700">
-                                        <p className="text-slate-400 text-sm">Pendentes</p>
-                                        <p className="text-3xl font-bold mt-2 text-amber-400">
-                                            {visits.filter(v => v.status === "agendada").length}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="bg-[#1E293B] p-6 rounded-2xl border border-slate-700">
-                                    <h3 className="font-bold mb-4">Visitas de Hoje</h3>
-                                    {todayVisits.length === 0 ? (
-                                        <p className="text-slate-500 text-sm">Nenhuma visita agendada para hoje.</p>
-                                    ) : (
-                                        todayVisits.map(v => (
-                                            <div key={v.id} className="p-3 border-b border-slate-700 last:border-0">
-                                                {clients.find(c => c.id === v.clientId)?.name || "Cliente"} - {v.time}
-                                            </div>
-                                        ))
-                                    )}
-                                </div>
-                            </div>
-                        )}
-
-                        {view === "clientes" && (
-                            <div>
-                                <div className="flex justify-between items-center mb-6">
-                                    <h2 className="text-2xl font-bold font-['Space_Grotesk']">Meus Clientes</h2>
-                                    <button className="bg-indigo-600 px-4 py-2 rounded-lg font-medium">+ Novo Cliente</button>
-                                </div>
-                                <div className="bg-[#1E293B] rounded-xl border border-slate-700 overflow-hidden">
-                                    <table className="w-full text-left">
-                                        <thead className="bg-slate-800 text-slate-400 text-sm">
-                                            <tr>
-                                                <th className="p-4">Empresa</th>
-                                                <th className="p-4">Cidade</th>
-                                                <th className="p-4">Contato</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {clients.length === 0 ? (
-                                                <tr><td colSpan="3" className="p-10 text-center text-slate-500">Nenhum cliente cadastrado ainda.</td></tr>
-                                            ) : (
-                                                clients.map(c => (
-                                                    <tr key={c.id} className="border-t border-slate-700 hover:bg-slate-800/50">
-                                                        <td className="p-4 font-medium">{c.name}</td>
-                                                        <td className="p-4 text-slate-400">{c.city}</td>
-                                                        <td className="p-4 text-slate-400">{c.phone}</td>
-                                                    </tr>
-                                                ))
-                                            )}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        )}
-
-                        {view === "visitas" && (
-                            <div>
-                                <h2 className="text-2xl font-bold mb-6 font-['Space_Grotesk']">Agenda de Visitas</h2>
-                                <p className="text-slate-400">Aqui aparecerão suas visitas agendadas e realizadas.</p>
-                            </div>
-                        )}
+                    </aside>
+                    <main className="flex-1 p-10">
+                        {renderContent()}
                     </main>
                 </div>
             );
